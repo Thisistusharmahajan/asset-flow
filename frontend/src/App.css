@@ -1,0 +1,12 @@
+.app {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 30px;
+}
+
+h1 {
+  font-size: 42px;
+  color: #2563eb;
+  font-weight: bold;
+}
