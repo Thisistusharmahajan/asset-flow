@@ -1,82 +1,172 @@
-# AssetFlow — Login & Dashboard (Screens 1 & 2)
+# AssetFlow
 
-A working slice of AssetFlow: React frontend + Flask backend, wired to a
-real database, implementing the Login/Signup screen and the Dashboard
-home screen from the mockup.
+AssetFlow is a full-stack Asset Management System that helps organizations efficiently manage company assets, employee allocations, maintenance requests, resource bookings, transfer requests, and notifications from a centralized dashboard.
+
+The application provides secure authentication, real-time dashboard statistics, and a modern user interface for tracking organizational assets.
+
+# Problem Statement
+
+Organizations often struggle to maintain records of company assets due to manual processes or disconnected systems. This leads to:
+
+- Difficulty tracking asset allocation
+- Delayed maintenance requests
+- Poor visibility of available assets
+- Inefficient transfer management
+- Lack of centralized dashboard and reports
+
+AssetFlow solves these challenges by providing a centralized asset management platform where administrators and employees can manage assets efficiently.
+
+
+
+# Tech Stack
+
+## Frontend
+
+- React 19
+- HTML5
+- CSS3
+- JavaScript (ES6+)
+
+
+## Backend
+
+- Python
+
+
+# Database
+
+Development Database
+
+- PostgreSQL
+
+
+
+
+# Backend Dependencies
 
 ```
-assetflow/
-├── backend/     Flask API + SQLAlchemy models + seed script
-└── frontend/    React (Vite) app
+Flask
+Flask-SQLAlchemy
+Flask-JWT-Extended
+Flask-CORS
+python-dotenv
 ```
 
-## What's implemented
+---
 
-**Backend (Flask)**
-- `POST /api/auth/signup` — creates an Employee account only (no role
-  selection at signup, matching the spec: roles are assigned later by
-  an Admin from the Employee Directory).
-- `POST /api/auth/login` — email/password login, returns a JWT.
-- `GET /api/auth/me` — resolve the current user from the token.
-- `GET /api/dashboard/kpis` — the 6 KPI cards (Available, Allocated,
-  Maintenance Today, Active Bookings, Pending Transfers, Upcoming
-  Returns).
-- `GET /api/dashboard/overdue` — overdue allocations, shown separately
-  per the spec.
-- `GET /api/dashboard/activity` — recent activity feed.
+# Frontend Dependencies
 
-Models mirror the table/column names in the Postgres schema delivered
-earlier (`departments`, `employees`, `assets`, `asset_allocations`,
-`resource_bookings`, `transfer_requests`, `maintenance_requests`,
-`notifications`), using DB-agnostic column types so the same models
-run against SQLite (dev) or Postgres (set `DATABASE_URL`) unchanged.
+```
+React
+React DOM
+React Router DOM
+Vite
+```
 
-**Frontend (React + Vite)**
-- `/login` — sign in / sign up, matches the wireframe's copy ("Sign up
-  creates an employee account, admin roles assigned later").
-- `/dashboard` — sidebar nav, KPI grid, overdue-returns banner, quick
-  actions, recent activity + overdue panels, all live from the API.
-- Token stored in `localStorage`, protected routing via `AuthContext`.
+---
 
-## Running it
+# Installation Guide
 
-**Backend**
+## 1. Clone Repository
+
+```bash
+git clone <repository-url>
+
+cd asset-flow
+```
+
+---
+
+# Backend Setup
+
+### Navigate to Backend
+
 ```bash
 cd backend
-pip install -r requirements.txt
-python seed.py        # creates assetflow.db with demo data
-python app.py          # runs on http://localhost:5000
 ```
-Demo login: `admin@assetflow.com` / `password123`
 
-To point at Postgres instead of the SQLite dev file, set:
+### Create Virtual Environment (Optional)
+
+Windows
+
 ```bash
-export DATABASE_URL=postgresql://user:pass@host:5432/assetflow
-```
-(This works against the `assetflow_schema.sql` schema delivered
-earlier, since table/column names match — you'd run that DDL directly
-instead of `db.create_all()` for the full production schema with all
-constraints, triggers, and views.)
+python -m venv venv
 
-**Frontend**
+venv\Scripts\activate
+```
+
+Linux / Mac
+
+```bash
+python3 -m venv venv
+
+source venv/bin/activate
+```
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Create Demo Database
+
+```bash
+python seed.py
+```
+
+### Run Backend Server
+
+```bash
+python app.py
+```
+
+Backend runs at:
+
+```
+http://localhost:5000
+```
+
+---
+
+# Frontend Setup
+
+Open another terminal.
+
+Navigate to frontend
+
 ```bash
 cd frontend
-npm install
-npm run dev             # runs on http://localhost:5173
 ```
-`frontend/.env` points `VITE_API_BASE` at `http://localhost:5000/api`
-— update it if the backend runs elsewhere.
 
-## Design notes
+Install packages
 
-- Palette: ink navy (`#14213d`) for the sidebar/headings, a muted
-  forest-teal accent (`#2f6d5c`) for primary actions and "available/
-  verified" states, warm off-white background — steers away from the
-  generic cream+terracotta/dark+neon defaults toward something that
-  reads as operational software, not a marketing page.
-- Type: Space Grotesk for headings, Inter for body text, IBM Plex Mono
-  for anything that's inventory data — asset tags, KPI numbers, the
-  activity timestamps — so numbers and tags read like scanned/tracked
-  data rather than generic UI copy.
-- Both screens verified end-to-end against the running Flask API (not
-  mocked data) before delivery.
+```bash
+npm install
+```
+
+Start development server
+
+```bash
+npm run dev
+```
+
+Frontend runs at:
+
+```
+http://localhost:5173
+```
+
+---
+
+# Environment Variables
+
+For PostgreSQL
+
+```
+DATABASE_URL=postgresql://username:password@localhost:5432/assetflow
+```
+
+# Team Member
+
+Tushar Mahajan, Arushi Nirala, Kedareswari Bandaru
