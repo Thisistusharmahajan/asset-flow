@@ -1,0 +1,209 @@
+.shell {
+  min-height: 100%;
+  display: grid;
+  grid-template-columns: 232px 1fr;
+}
+
+/* ---------- Content ---------- */
+
+.content {
+  padding: 28px 36px 48px;
+}
+
+.content-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.content-header h1 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--ink);
+  margin: 0;
+}
+
+.content-date {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.banner {
+  border-radius: 9px;
+  padding: 11px 15px;
+  font-size: 13.5px;
+  margin-bottom: 18px;
+}
+
+.banner-error {
+  background: var(--red-soft);
+  color: var(--red);
+  border: 1px solid rgba(164,48,43,0.25);
+}
+
+.banner-overdue {
+  background: var(--red-soft);
+  color: var(--red);
+  border: 1px solid rgba(164,48,43,0.25);
+}
+
+/* ---------- KPI grid ---------- */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kpi-value {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.kpi-label {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ---------- Quick actions ---------- */
+
+.quick-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 26px;
+  flex-wrap: wrap;
+}
+
+.action-primary, .action-secondary {
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.action-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.action-primary:hover { background: #275c4e; }
+
+.action-secondary {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--ink-soft);
+}
+.action-secondary:hover { background: var(--surface-sunken); }
+
+/* ---------- Panels ---------- */
+
+.panels {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+
+.panel h2 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+.empty-state {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.activity-list, .overdue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activity-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  font-size: 13px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--surface-sunken);
+}
+.activity-list li:last-child { border-bottom: none; padding-bottom: 0; }
+
+.activity-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.activity-message { flex: 1; color: var(--text); }
+.activity-time { color: var(--text-muted); font-size: 11.5px; font-family: var(--font-mono); }
+
+.overdue-list li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 2px 8px;
+  font-size: 12.5px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--surface-sunken);
+}
+.overdue-list li:last-child { border-bottom: none; padding-bottom: 0; }
+
+.asset-tag {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 1px 6px;
+  border-radius: 5px;
+  width: fit-content;
+}
+
+.overdue-name { font-weight: 600; color: var(--text); grid-column: 2; }
+.overdue-holder { color: var(--text-muted); grid-column: 2; }
+.overdue-days {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  align-self: center;
+  color: var(--red);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+
+@media (max-width: 860px) {
+  .shell { grid-template-columns: 1fr; }
+  .panels { grid-template-columns: 1fr; }
+}
