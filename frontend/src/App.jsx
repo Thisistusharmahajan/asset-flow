@@ -2,6 +2,8 @@ import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-d
 import { AuthProvider, useAuth } from "./AuthContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import OrganizationSetup from "./pages/OrganizationSetup";
+import Assets from "./pages/Assets";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -23,6 +25,22 @@ function Shell() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/organization-setup"
+        element={
+          <ProtectedRoute>
+            <OrganizationSetup />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/assets"
+        element={
+          <ProtectedRoute>
+            <Assets />
           </ProtectedRoute>
         }
       />

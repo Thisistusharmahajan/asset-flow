@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api";
-import { useAuth } from "../AuthContext";
+import Sidebar from "../components/Sidebar";
 import "./Dashboard.css";
-
-const NAV_ITEMS = [
-  "Dashboard", "Organization setup", "Assets", "Allocation & Transfer",
-  "Resource Booking", "Maintenance", "Audit", "Reports", "Notifications",
-];
 
 const KPI_META = [
   { key: "assets_available", label: "Available" },
@@ -28,9 +23,7 @@ function timeAgo(iso) {
 }
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
-
   const [kpis, setKpis] = useState(null);
   const [overdue, setOverdue] = useState([]);
   const [activity, setActivity] = useState([]);
@@ -46,40 +39,9 @@ export default function Dashboard() {
       .catch((err) => setError(err.message));
   }, []);
 
-  function handleLogout() {
-    logout();
-    navigate("/login");
-  }
-
   return (
     <div className="shell">
-      <aside className="sidebar">
-        <div className="sidebar-brand">AssetFlow</div>
-        <nav className="sidebar-nav">
-          {NAV_ITEMS.map((item) => (
-            <a
-              key={item}
-              href="#"
-              className={"sidebar-link" + (item === "Dashboard" ? " active" : "")}
-              onClick={(e) => e.preventDefault()}
-            >
-              {item}
-            </a>
-          ))}
-        </nav>
-        <div className="sidebar-footer">
-          <div className="sidebar-user">
-            <div className="sidebar-avatar">{user?.name?.[0] ?? "?"}</div>
-            <div>
-              <div className="sidebar-user-name">{user?.name ?? "…"}</div>
-              <div className="sidebar-user-role">{user?.role ?? ""}</div>
-            </div>
-          </div>
-          <button className="sidebar-logout" onClick={handleLogout}>
-            Log out
-          </button>
-        </div>
-      </aside>
+      <Sidebar active="Dashboard" />
 
       <main className="content">
         <header className="content-header">
@@ -113,7 +75,9 @@ export default function Dashboard() {
         )}
 
         <section className="quick-actions">
-          <button className="action-primary">+ Register asset</button>
+          <button className="action-primary" onClick={() => navigate("/assets")}>
+            + Register asset
+          </button>
           <button className="action-secondary">Book resource</button>
           <button className="action-secondary">Raise maintenance request</button>
         </section>
