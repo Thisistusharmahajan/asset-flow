@@ -1,4 +1,4 @@
-"""Populate the dev database with demo data so Screens 1 & 2 render
+"""Populate the dev database with demo data so Screens 1-4 render
 meaningfully. Run with: python seed.py
 """
 from datetime import datetime, timedelta, date
@@ -6,19 +6,30 @@ from datetime import datetime, timedelta, date
 from werkzeug.security import generate_password_hash
 
 from app import app
+from extensions import db
 from models import (
-    db, Employee, Department, AssetCategory, Asset, AssetAllocation,
-    ResourceBooking, TransferRequest, MaintenanceRequest, Notification
+    Employee, Department, AssetCategory, Asset, AssetAllocation,
+    AssetStatusHistory, ResourceBooking, TransferRequest,
+    MaintenanceRequest, Notification,
 )
 
 
 def run():
     with app.app_context():
+        db.drop_all()
+        db.create_all()
 
         it = Department(name="IT")
         engineering = Department(name="Engineering")
         facilities = Department(name="Facilities")
-        db.session.add_all([it, engineering, facilities])
+        field_ops = Department(name="Field Ops")
+        db.session.add_all([it, engineering, facilities, field_ops])
+        db.session.flush()
+
+        field_ops_east = Department(
+            name="Field ops (east)", parent_department_id=field_ops.id, status="Inactive"
+        )
+        db.session.add(field_ops_east)
         db.session.flush()
 
         admin = Employee(
@@ -36,7 +47,22 @@ def run():
             password_hash=generate_password_hash("password123"),
             role="AssetManager", department_id=facilities.id,
         )
-        db.session.add_all([admin, priya, rohan])
+        aditi = Employee(
+            name="Aditi Rao", email="aditi@assetflow.com",
+            password_hash=generate_password_hash("password123"),
+            role="DepartmentHead", department_id=engineering.id,
+        )
+        sana = Employee(
+            name="Sana Iqbal", email="sana@assetflow.com",
+            password_hash=generate_password_hash("password123"),
+            role="DepartmentHead", department_id=field_ops_east.id,
+        )
+        db.session.add_all([admin, priya, rohan, aditi, sana])
+        db.session.flush()
+
+        engineering.head_employee_id = aditi.id
+        facilities.head_employee_id = rohan.id
+        field_ops_east.head_employee_id = sana.id
         db.session.flush()
 
         electronics = AssetCategory(name="Electronics")
@@ -45,28 +71,51 @@ def run():
         db.session.flush()
 
         assets = []
-        for i in range(1, 129):
+        for i in range(1, 12):
             assets.append(Asset(
                 asset_tag=f"AF-{i:04d}", name="Dell Laptop", category_id=electronics.id,
                 department_id=it.id, location="Bengaluru", status="Available",
+                serial_number=f"DL-SN-{1000 + i}", condition="Good",
             ))
-        for i in range(129, 205):
+        laptop_12 = Asset(
+            asset_tag="AF-0012", name="Dell Laptop", category_id=electronics.id,
+            department_id=engineering.id, location="Bengaluru", status="Allocated",
+            serial_number="DL-SN-1012", condition="Good",
+        )
+        assets.append(laptop_12)
+
+        for i in range(13, 62):
             assets.append(Asset(
                 asset_tag=f"AF-{i:04d}", name="Office Chair", category_id=furniture.id,
                 department_id=facilities.id, location="Warehouse", status="Allocated",
+                condition="Fair",
             ))
+
+        projector = Asset(
+            asset_tag="AF-0062", name="Projector", category_id=electronics.id,
+            department_id=it.id, location="HQ Floor 2", status="Under Maintenance",
+            serial_number="PJ-SN-4471", condition="Fair",
+        )
+        chair_201 = Asset(
+            asset_tag="AF-0201", name="Office Chair", category_id=furniture.id,
+            department_id=facilities.id, location="Warehouse", status="Available",
+            condition="Good",
+        )
         room_b2 = Asset(
             asset_tag="AF-0300", name="Conference Room B2", category_id=furniture.id,
             department_id=facilities.id, location="HQ Floor 2", status="Available",
             is_bookable=True,
         )
-        projector = Asset(
-            asset_tag="AF-0301", name="Projector", category_id=electronics.id,
-            department_id=it.id, location="HQ Floor 2", status="Under Maintenance",
-        )
-        assets.extend([room_b2, projector])
+        assets.extend([projector, chair_201, room_b2])
+
         db.session.add_all(assets)
         db.session.flush()
+
+        for asset in assets:
+            db.session.add(AssetStatusHistory(
+                asset_id=asset.id, from_status=None, to_status=asset.status,
+                changed_by=admin.id, notes="Asset registered (seed data)",
+            ))
 
         # a few active allocations, including one overdue
         overdue_alloc = AssetAllocation(
@@ -76,7 +125,7 @@ def run():
             status="Active",
         )
         upcoming_alloc = AssetAllocation(
-            asset_id=assets[1].id, employee_id=rohan.id,
+            asset_id=laptop_12.id, employee_id=rohan.id,
             allocated_date=date.today() - timedelta(days=5),
             expected_return_date=date.today() + timedelta(days=4),
             status="Active",
@@ -107,8 +156,8 @@ def run():
         db.session.add_all([
             Notification(
                 recipient_id=admin.id, type="Asset Assigned",
-                title="Laptop AF-0114 assigned",
-                message="Laptop AF-0114 allocated to Priya Shah - IT dept",
+                title="Laptop AF-0012 assigned",
+                message="Laptop AF-0012 allocated to Rohan Mehta - Facilities dept",
             ),
             Notification(
                 recipient_id=admin.id, type="Booking Confirmed",
